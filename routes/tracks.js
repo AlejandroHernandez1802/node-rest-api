@@ -11,7 +11,8 @@ const {
 } = require("../controllers/tracks");
 
 //Middlewares import
-const customHeader = require("../middlewares/customHeader");
+const authMiddleware = require("../middlewares/session");
+const checkRole = require("../middlewares/role");
 
 //Validators import
 const {
@@ -20,10 +21,28 @@ const {
 } = require("../validators/tracks");
 
 //Routes creation
-router.get("/", getItems);
-router.get("/:id", getItemValidator, getItem);
-router.post("/", createItemValidator, customHeader, createItem);
-router.put("/:id", getItemValidator, createItemValidator, updateItem);
-router.delete("/:id", getItemValidator, createItemValidator, deleteItem);
+router.get("/", authMiddleware, getItems);
+router.get("/:id", authMiddleware, getItemValidator, getItem);
+router.post(
+	"/",
+	authMiddleware,
+	checkRole(["admin"]),
+	createItemValidator,
+	createItem
+);
+router.put(
+	"/:id",
+	authMiddleware,
+	getItemValidator,
+	createItemValidator,
+	updateItem
+);
+router.delete(
+	"/:id",
+	authMiddleware,
+	getItemValidator,
+	createItemValidator,
+	deleteItem
+);
 
 module.exports = router;

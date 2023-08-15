@@ -5,7 +5,8 @@ const { matchedData } = require("express-validator");
 const getItems = async (req, res) => {
 	try {
 		const data = await tracksModel.find({});
-		res.send({ data });
+		const user = req.user;
+		res.send({ data, user });
 	} catch (err) {
 		console.log(err);
 		handleHttpError(res, "There wa an error while trying to get the tracks");
